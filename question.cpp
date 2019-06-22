@@ -318,29 +318,149 @@ public:
     // 209. Minimum Size Subarray Sum
     // https://leetcode.com/problems/minimum-size-subarray-sum/
     int minSubArrayLen(int s, vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        int result = 0, cur_sum = 0, k = -1;
+        for (int i = 0; i < n; i++) {
+            cur_sum += nums[i];
+            while (cur_sum >= s) {
+                result = result > i - k || result == 0 ? i - k : result;
+                cur_sum -= nums[++k];
+            }
+        }
+        return result;
+        /* Slower Solving.
         if (nums.size() == 0) return 0;
-
-        int result = 0, cur_sum = nums[0], k = -1;
-        for (int i = 1; i < nums.size(); i++) {
+        for (int i = 0; i < nums.size(); i++) {
             cur_sum += nums[i];
             if (cur_sum >= s) {
-                while (cur_sum > s) {
-                    result = result > i - k ? i - k : result;
+                while (cur_sum >= s) {
+                    result = result > i - k || result == 0 ? i - k : result;
                     cur_sum -= nums[++k];
                 }
             }
             else if (result > 0 && result <= i - k) cur_sum -= nums[++k];
+        } */
+    }
+
+    // 189. Rotate Array
+    // https://leetcode.com/problems/rotate-array/
+    void rotate(vector<int>& nums, int k) {
+        int N = nums.size(), n = nums.size(), start = 0, mingap = k;
+        k %= n;
+        if (k == 0) return;
+        while (true) {
+            mingap = min(start + k, N);
+            for (int i = start; i < mingap; i++) {
+                swap(nums[i], nums[n - k + i]);
+            }
+            n -= k;
+            start += k;
+            k %= n;
+            if (k == 0) break; 
+        }
+    }
+
+    // 119. Pascal's Triangle II
+    // https://leetcode.com/problems/pascals-triangle-ii/
+    vector<int> getRow(int rowIndex) {
+        vector<int> result(rowIndex+1, 0);
+        result[0] = 1;
+        for (int i = 1; i <= rowIndex; i++) {
+            for (int j = i; j > 0; j--) {
+                result[j] += result[j-1];
+            }
         }
         return result;
+    }
+
+    // 151. Reverse Words in a String
+    // https://leetcode.com/problems/reverse-words-in-a-string/
+    string reverseWords(string s) {
+        string result = "";
+        int k = s.size();
+        bool flag = false;
+        for (int i = k - 1; i >= 0; i--) {
+             if (!(s[i] - ' ')) {
+                 if (flag) {
+                     result.append(s.begin() + i + 1, s.begin() + k);
+                     result.push_back(' ');
+                     flag = false;
+                 }
+                 k = i;
+             }
+            else flag = true;
+        }
+        if (k > 0) result.append(s.begin(), s.begin() + k);
+        else if (result.size() > 0) result.pop_back();
+        return result;
+    }
+
+    // 557. Reverse Words in a String III
+    // https://leetcode.com/problems/reverse-words-in-a-string-iii/
+    string reverseWordsIII(string s) {
+        string result = "", tmp;
+        int k = -1, n = s.size();
+        bool flag = false;
+        for (int i = 0; i < n; i++) {
+            if (!(s[i] - ' ')) {
+                if (flag) {
+                    tmp.assign(s.begin() + k + 1, s.begin() + i);
+                    reverse(tmp.begin(), tmp.end());
+                    result.append(tmp);
+                    result += ' ';
+                    flag = false;
+                }
+                k = i;
+            }
+            else flag = true;
+        }
+        if (k < n - 1) {
+            tmp.assign(s.begin() + k + 1, s.end());
+            reverse(tmp.begin(), tmp.end());
+            result.append(tmp);
+        }
+        else if (result.size() > 0) result.pop_back();
+        return result;      
+    }
+
+    // 26. Remove Duplicates from Sorted Array
+    // https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+    int removeDuplicates(vector<int>& nums) {
+        int n = nums.size();
+        if (n < 2) return n;
+        int result = 0, k = 0;
+        for (int i = 1; i < n; i++) {
+            if (nums[i] != nums[k]) {
+                nums[result++] = nums[k];
+                k = i;
+            }
+        }
+        nums[result++] = nums[k];
+        return result;
+    }
+
+    // 283. Move Zeroes
+    // https://leetcode.com/explore/learn/card/array-and-string/204/conclusion/1174/
+    void moveZeroes(vector<int>& nums) {
+        int n = nums.size();
+        if (n < 2) return;
+        int k = -1;
+        for (int i = 0; i < n; i++) {
+            if (k == -1) {
+                if (nums[i] == 0) k = i;
+            }
+            else {
+                if (nums[i] != 0) swap(nums[i], nums[k++]);
+            } 
+        }
     }
 };
 
 int main() {
     Solution Sol;
-    int a[] = {2,3,1,2,4,3};
+    int a[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
     vector<int> t1(begin(a), end(a));
 
-    int out;
-    out = Sol.minSubArrayLen(7, t1);
-    cout << out << endl;
+    Sol.rotate(t1, 38);
 }
