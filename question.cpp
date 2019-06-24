@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <unordered_set>
 using namespace std;
 
 class Solution {
@@ -455,12 +456,104 @@ public:
             } 
         }
     }
+
+    // 217. Contains Duplicate
+    // https://leetcode.com/problems/contains-duplicate/
+    bool containsDuplicate(vector<int>& nums) {
+        unordered_set<int> hs;
+        for (int num: nums) {
+            if (hs.count(num) > 0) return true;
+            else hs.insert(num);
+        }
+        return false;
+    }
+
+    // 136. Single Number
+    // https://leetcode.com/problems/single-number/
+    int singleNumber(vector<int>& nums) {
+        int result = 0;
+        for (int num: nums) result ^= num;
+        return result;
+    }
+
+    // 349. Intersection of Two Arrays
+    // https://leetcode.com/problems/intersection-of-two-arrays/
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        // unordered_set<int> ns(nums1.begin(), nums1.end());
+        unordered_set<int> ns;
+        vector<int> result;
+        for(int num1: nums1) ns.insert(num1);
+        for(int num2: nums2) {
+            if (ns.count(num2) > 0) {
+                result.emplace_back(num2);
+                ns.erase(num2);
+            }
+        }
+        return result;
+    }
 };
 
+// 705. Design HashSet
+// https://leetcode.com/problems/design-hashset/
+class MyHashSet {
+private:
+    int hasharray[1000001];
+
+public:
+    /** Initialize your data structure here. */
+    MyHashSet() {
+        
+    }
+    
+    void add(int key) {;
+        hasharray[key] = 1;
+    }
+    
+    void remove(int key) {
+        hasharray[key] = 0;
+    }
+    
+    /** Returns true if this set contains the specified element */
+    bool contains(int key) {
+        if (hasharray[key] == 1) return true;
+        return false;
+    }
+};
+
+// 706. Design HashMap
+// https://leetcode.com/problems/design-hashmap/
+class MyHashMap {
+private:
+    int hasharray[1000001];
+public:
+    /** Initialize your data structure here. */
+    MyHashMap() {
+        for (int i = 0; i < 1000001; i++) hasharray[i] = -1;
+    }
+    
+    /** value will always be non-negative. */
+    void put(int key, int value) {
+        hasharray[key] = value;
+    }
+    
+    /** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+    int get(int key) {
+        return hasharray[key];
+    }
+    
+    /** Removes the mapping of the specified value key if this map contains a mapping for the key */
+    void remove(int key) {
+        hasharray[key] = -1;
+    }
+};
+
+
 int main() {
+    /*
     Solution Sol;
     int a[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
     vector<int> t1(begin(a), end(a));
 
     Sol.rotate(t1, 38);
+    */
 }
