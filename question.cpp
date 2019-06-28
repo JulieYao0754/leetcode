@@ -1,7 +1,9 @@
 #include <iostream>
 #include <algorithm>
+#include <math.h>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 using namespace std;
 
 class Solution {
@@ -276,7 +278,7 @@ public:
 
     // 167. Two Sum II - Input array is sorted
     // https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/
-    vector<int> twoSum(vector<int>& numbers, int target) {
+    vector<int> twoSumII(vector<int>& numbers, int target) {
         vector<int> result;
         int i = 0, j = numbers.size() - 1;
         while (numbers[i] + numbers[j] != target) {
@@ -491,6 +493,141 @@ public:
         }
         return result;
     }
+
+    // 202. Happy Number
+    // https://leetcode.com/problems/happy-number/
+    int replaceDigits(int n) {
+        int out = 0;
+        while (n) {
+            out += pow(n % 10, 2);
+            n /= 10;
+        }
+        return out;
+    }
+    bool isHappy(int n) {
+        bool hasharray[1000] = {0};
+        n = replaceDigits(n);
+        while(!hasharray[n]) {
+            hasharray[n] = true;
+            if (n == 1) return true;
+            n = replaceDigits(n);
+        }
+        return false;
+    }
+
+    // 1. Two Sum
+    // https://leetcode.com/problems/two-sum/
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> dict;
+        for (int i = 0; i < nums.size(); i++) {
+            if (dict.count(target - nums[i]) > 0 && i != dict[target - nums[i]]) {
+                return {i, dict[target - nums[i]]};
+            }
+            dict[nums[i]] = i;
+        }
+        return {};
+    }
+
+    // 205. Isomorphic Strings
+    // https://leetcode.com/problems/isomorphic-strings/
+    bool isIsomorphic(string s, string t) {
+        int n = s.size();
+        unordered_map<char, char> dict, revdict;
+        for (int i = 0; i < n; i++) {
+            if (dict.count(s[i]) > 0 && dict[s[i]] != t[i]) return false;
+            if (revdict.count(t[i]) > 0 && revdict[t[i]] != s[i]) return false;
+            dict[s[i]] = t[i];
+            revdict[t[i]] = s[i];
+        } 
+        return true;
+    }
+
+    // 599. Minimum Index Sum of Two Lists
+    // https://leetcode.com/problems/minimum-index-sum-of-two-lists/
+    vector<string> findRestaurant(vector<string>& list1, vector<string>& list2) {
+        int l1 = list1.size(), l2 = list2.size(), sum = INT32_MAX;
+        unordered_map<string, int> dict;
+        vector<string> max;
+        for (int i = 0; i < l1; i++) dict[list1[i]] = i;
+        for (int i = 0; i < l2; i++) {
+            if (dict.count(list2[i]) > 0) {
+                int tmp = dict[list2[i]] + i;
+                if (tmp < sum) {
+                    sum = tmp;
+                    max = {list2[i]};
+                }
+                else if (tmp == sum) max.push_back(list2[i]);
+            }
+        }
+        return max;
+    }
+
+    // 387. First Unique Character in a String
+    // https://leetcode.com/problems/first-unique-character-in-a-string/
+    int firstUniqChar(string s) {
+        if (s == "") return -1;
+        unordered_map<char, pair<int, int>> dict;
+        for (int i = 0; i < s.size(); i++) {
+            dict[s[i]].first = i;
+            dict[s[i]].second++;
+        }
+        int min = INT32_MAX;
+        for (auto it = dict.begin(); it != dict.end(); it++) {
+            if (it->second.second == 1 && it->second.first < min) min = it -> second.first;
+        }
+        return min < INT32_MAX ? min : -1;
+    }
+
+    // 350. Intersection of Two Arrays II
+    // https://leetcode.com/problems/intersection-of-two-arrays-ii/
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        unordered_map<int, int> dict;
+        vector<int> result;
+        for (int ele: nums1) dict[ele]++;
+        for (int ele: nums2) {
+            if (dict.count(ele) != 0) {
+                dict[ele]--;
+                if (dict[ele] == 0) dict.erase(ele);
+                result.push_back(ele);
+            }
+        }
+        return result;
+    }
+
+    // 219. Contains Duplicate II
+    // https://leetcode.com/problems/contains-duplicate-ii/
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        unordered_map<int, int> dict;
+        for (int i = 0; i < nums.size(); i++) {
+            if (dict.count(nums[i]) != 0 && i - dict[nums[i]] <= k) return true;
+            dict[nums[i]] = i;
+        }
+        return false;
+    }
+
+    // 49. Group Anagrams
+    // https://leetcode.com/problems/group-anagrams/
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        vector<vector<string>> result;
+        unordered_map<string, vector<string>> out;
+        for (string str: strs) out[keyofAna(str)].push_back(str);
+        // for (auto it: out) result.push_back(it.second);  Slower(?)
+        for (auto it = out.begin(); it != out.end(); it++) result.push_back({it->second.begin(), it->second.end()});
+        return result;
+    }
+    string keyofAna(string word) {
+        int count[26] = {0};
+        string output;
+        for (char c: word) count[c - 'a']++;
+        for (int num: count) output += num;
+        return output;
+    }
+
+    // 36. Valid Sudoku
+    // https://leetcode.com/problems/valid-sudoku/
+    bool isValidSudoku(vector<vector<char>>& board) {
+        
+    }
 };
 
 // 705. Design HashSet
@@ -596,14 +733,7 @@ int main() {
 
     Sol.rotate(t1, 38);
     */
-//    int a[] = {0,1,3,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-//               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-//               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-//               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-//               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-//               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    int a[] = {652958,2522230,2465704,3832942,2754307,3451782,2776741,3398778,1323557,3785775,3184920,1100919,235592,662549,2563642,3036360,1996527,3705715,825817,3059729,2643006,3164888,148125,2505531,829199,189123,2239544,1735001,47730,1022995,3169331,3810442,2460389,1075633,3641414,2173315,1314752,1722600,1916232,1065769,1060527,1955368,3355152,649890,2590549,53360,1220867,1300573,3180064,3871511,342488,1776396,2843299,2671214,1207635,2921445,53106,190689,467786,2881315,2344937,212389,2386727,3875730,2190046,3409898,1408725,3048496,2867953,3135570,2432864,1933070,1603594,2019826,180529,3045537,2249666,2951898,2482439,3024064,3524566,2141017,3742383,799524,1469154,293250,1067599,1905804,2396055,2172195,2858562,1534287,1575952,601213,3455176,1203347,544860,3892538,520295,1702638,349639,3024786,1952106,1517275,2050957,4535,1657261,2355059,3168685,2981434,3566412,592191,2146008,1543766,1750688,3213722,3569504,2609287,3763041,628127,1508571,489179,311908,3613193,669184,2304018,1996451,1004078,3834156,3329104,1520096,1663361,1597628,1600011,3750542,2089582,1593571,1173342,733072,3478705,3580849,2939384,237497,3060221,2925767,3195082,3899321,82885,3233869,3120434,2329561,3305348,99358,1133566,2271989,2833394,2315617,2945369,1790281,2835887,3863051,822151,143200,938699,341686,1975441,1231516,1574235,2206397,1409254,738302,2487741,1859422,927941,3558351,3812682,3730642,2572155,2682116,829589,2512211,3675235,1374535,1070909,3551663,2630024,1824728,3887991,2578648,1339330,1852223,500054,2738506,2582517,3483094,1263097,71922,2117392,1915528,1876631,1176735,2024988,1039754,166730,596051,2351692,3320051,333675,848482,849207,2053241,526718,1455618,1479452,1560714,3388737,626298,205338,551162,3331124,1065550,632389,2815802,1202391,1700988,875769,2726105,3040859,3004780,1753639,995061,1387695,1883108,3008913,805735,2577588,2823145,2451544,1877117,1511402,3681237,1949282,2799341,3334487,3356387,876811,679101,667366,84074,1188002,1939276,1671058,1324519,3546841,1521673,1966319};
-    vector<int> t1(begin(a), end(a));
-    RandomClick Sol;
-    Sol.sampleStats(t1);
+    vector<string> a = {"Shogun","Tapioca Express","Burger King","KFC"};
+    vector<string> b = {"Piatti","The Grill at Torrey Pines","Hungry Hunter Steakhouse","Shogun"};
+    Solution Sol;
 }
