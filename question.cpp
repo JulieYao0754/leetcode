@@ -626,7 +626,51 @@ public:
     // 36. Valid Sudoku
     // https://leetcode.com/problems/valid-sudoku/
     bool isValidSudoku(vector<vector<char>>& board) {
-        
+        for (vector<char> row: board) {
+            if (!keyofRow(row)) {
+                cout<< "row" << endl;
+                return false;
+            }
+        }
+        for (int i = 0; i < 9; i++) {
+            if (!keyofColumn(board, i)) {
+                cout<< "column" << endl;
+                return false;
+            }
+            if (!keyofBox(board, i)) {
+                cout<< "box" << endl;
+                return false;
+            }
+        }
+        return true;
+    }
+    bool keyofRow(vector<char>& row) {
+        int count[10] = {0};
+        for (char num: row) {
+            if (num == '.') continue;
+            if (count[num - '0'] != 0) return false;
+            count[num - '0'] ++;
+        }
+        return true;
+    }
+    bool keyofColumn(vector<vector<char>>& board, int& i) {
+        int counts[10] = {0};
+        for (int x = 0; x < 9; x++) {
+            if (board[x][i] == '.') continue;
+            if (counts[board[x][i] - '0'] != 0) return false;
+            counts[board[x][i] - '0'] ++;
+        }
+        return true;
+    }
+    bool keyofBox(vector<vector<char>>& board, int& i) {
+        int startX = i/3 * 3, startY = i%3 * 3;
+        int counts[10] = {0};
+        for (int count = 0; count < 9; count++) {
+            if (board[startX + count/3][startY + count%3] == '.') continue;
+            if (counts[board[startX + count/3][startY + count%3] - '0'] != 0) return false;
+            counts[board[startX + count/3][startY + count%3] - '0'] ++;
+        }
+        return true;
     }
 };
 
@@ -728,12 +772,20 @@ public:
 int main() {
     /*
     Solution Sol;
-    int a[] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27};
     vector<int> t1(begin(a), end(a));
-
-    Sol.rotate(t1, 38);
     */
-    vector<string> a = {"Shogun","Tapioca Express","Burger King","KFC"};
-    vector<string> b = {"Piatti","The Grill at Torrey Pines","Hungry Hunter Steakhouse","Shogun"};
+
+    vector<char> a = {'5','3','.','.','7','.','.','.','.'};
+    vector<char> b = {'6','.','.','1','9','5','.','.','.'};
+    vector<char> c = {'.','9','8','.','.','.','.','6','.'};
+    vector<char> d = {'8','.','.','.','6','.','.','.','3'};
+    vector<char> e = {'4','.','.','8','.','3','.','.','1'};
+    vector<char> f = {'7','.','.','.','2','.','.','.','6'};
+    vector<char> g = {'.','6','.','.','.','.','2','8','.'};
+    vector<char> h = {'.','.','.','4','1','9','.','.','5'};
+    vector<char> i = {'.','.','.','.','8','.','.','7','9'};
+    vector<vector<char>> t = {a,b,c,d,e,f,g,h,i};
     Solution Sol;
+    bool result = Sol.isValidSudoku(t);
+    cout << result << endl;
 }
