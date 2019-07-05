@@ -6,6 +6,14 @@
 #include <unordered_map>
 using namespace std;
 
+struct TreeNode {
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+        TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ };
+
+
 class Solution {
 public:
     //  724. Find Pivot Index
@@ -672,6 +680,87 @@ public:
         }
         return true;
     }
+
+    // 652. Find Duplicate Subtrees
+    // https://leetcode.com/problems/find-duplicate-subtrees/
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        unordered_map<string, vector<TreeNode*>> dict;
+        vector<TreeNode*> result;
+        generate_link(root, dict);
+        for (auto it = dict.begin(); it != dict.end(); it++) {
+            if (it -> second.size() > 1) result.push_back(it -> second[0]);
+        }
+        return result;
+    }
+    string generate_link(TreeNode*& node, unordered_map<string, vector<TreeNode*>>& dict) {
+        if (!node) return "";
+        string s = "(" + generate_link(node->left, dict) + to_string(node->val) + generate_link(node->right, dict) + ")";
+        dict[s].push_back(node);
+        return s;
+    }
+
+    // 771. Jewels and Stones
+    // https://leetcode.com/problems/jewels-and-stones/
+    int numJewelsInStones(string J, string S) {
+        unordered_set<char> dict(begin(J), end(J));
+        int result = 0;
+        for (char s: S) {
+            if (dict.count(s) != 0) result++;
+        }
+        return result;
+    }
+
+    // 3. Longest Substring Without Repeating Characters
+    // https://leetcode.com/problems/longest-substring-without-repeating-characters/
+    int lengthOfLongestSubstring(string s) {
+        int result = 0, i = 0, k = 0;
+        unordered_set<char> dict;
+        while(i < s.size()) {
+            if (dict.count(s[i]) > 0) { 
+                result = result < (i - k) ? (i - k) : result;
+                dict.erase(s[k++]);
+            }
+            else {
+                dict.insert(s[i]);
+                i++;
+            }
+        }
+        return result < (i - k) ? (i - k) : result; 
+    }
+
+    // 454. 4Sum II
+    // https://leetcode.com/problems/4sum-ii/
+    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        unordered_map<int, int> absum;
+        int result = 0;
+        for (int a: A) {
+            for (int b: B) ++absum[a+b];
+        }
+        for (int c: C) {
+            for (int d: D) {
+                if (absum.count(0 - c - d) > 0) result += absum[0 - c - d];
+            }
+        }
+        return result;
+    }
+
+    // 347. Top K Frequent Elements
+    // https://leetcode.com/problems/top-k-frequent-elements/
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> dict;
+        unordered_map<int, vector<int>> revdict;
+        vector<int> result;
+        for (int num: nums) dict[num]++;
+        for (auto it = dict.begin(); it != dict.end(); it++) revdict[it->second].push_back(it->first);
+        for (int i = nums.size(); i > 0; i--) {
+            if (revdict.count(i) != 0) {
+                result.insert(result.end(), revdict[i].begin(), revdict[i].end());
+                k -= revdict[i].size();
+            }
+            if (k == 0) break;
+        }
+        return result;
+    }
 };
 
 // 705. Design HashSet
@@ -770,22 +859,7 @@ public:
 };
 
 int main() {
-    /*
     Solution Sol;
-    vector<int> t1(begin(a), end(a));
-    */
-
-    vector<char> a = {'5','3','.','.','7','.','.','.','.'};
-    vector<char> b = {'6','.','.','1','9','5','.','.','.'};
-    vector<char> c = {'.','9','8','.','.','.','.','6','.'};
-    vector<char> d = {'8','.','.','.','6','.','.','.','3'};
-    vector<char> e = {'4','.','.','8','.','3','.','.','1'};
-    vector<char> f = {'7','.','.','.','2','.','.','.','6'};
-    vector<char> g = {'.','6','.','.','.','.','2','8','.'};
-    vector<char> h = {'.','.','.','4','1','9','.','.','5'};
-    vector<char> i = {'.','.','.','.','8','.','.','7','9'};
-    vector<vector<char>> t = {a,b,c,d,e,f,g,h,i};
-    Solution Sol;
-    bool result = Sol.isValidSudoku(t);
-    cout << result << endl;
+    vector<int> a = {4,1,-1,2,-1,2,3};
+    vector<int> result = Sol.topKFrequent(a, 2);
 }
