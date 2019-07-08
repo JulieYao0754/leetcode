@@ -817,6 +817,44 @@ public:
     }
 };
 
+// 380. Insert Delete GetRandom O(1)
+// https://leetcode.com/problems/insert-delete-getrandom-o1/
+class RandomizedSet {
+private:
+    unordered_set<int> randomized;
+public:
+    /** Initialize your data structure here. */
+    RandomizedSet() {
+        
+    }
+    
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    bool insert(int val) {
+        if (randomized.count(val) != 0) return false;
+        randomized.insert(val);
+        return true;
+    }
+    
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    bool remove(int val) {
+        if (randomized.count(val) != 0) {
+            randomized.erase(val);
+            return true;
+        }
+        return false;
+    }
+    
+    /** Get a random element from the set. */
+    int getRandom() {
+        if (randomized.size() == 1) return *randomized.begin();
+        int random = rand() % randomized.size();
+        // This method is a bit slow, a faster way is to 
+        // use a vector storing the values and a map with the pair of value and position in vector.
+        return *next(randomized.begin(), random);
+    }
+};
+
+
 class RandomClick {
 public:
     // 1093. Statistics from a Large Sample
