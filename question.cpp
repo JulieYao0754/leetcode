@@ -761,6 +761,28 @@ public:
         }
         return result;
     }
+
+    // 144. Binary Tree Preorder Traversal
+    // https://leetcode.com/problems/binary-tree-preorder-traversal/
+    // Recursion
+    vector<int> preorderTraversal(TreeNode* root) {
+        if (root == NULL) return {};
+        vector<int> result = {root -> val};
+
+        if (root -> left) {
+            vector<int> left = preorderTraversal(root -> left);
+            result.insert(result.end(), left.begin(), left.end());
+        }
+        if (root -> right) {
+            vector<int> right = preorderTraversal(root -> right);
+            result.insert(result.end(), right.begin(), right.end());
+        }
+        return result;
+    }
+    // Iteration
+    vector<int> preorderTraversalIter(TreeNode* root) {
+        
+    }
 };
 
 // 705. Design HashSet
