@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <math.h>
 #include <vector>
+#include <stack>
 #include <unordered_set>
 #include <unordered_map>
 using namespace std;
@@ -768,19 +769,50 @@ public:
     vector<int> preorderTraversal(TreeNode* root) {
         if (root == NULL) return {};
         vector<int> result = {root -> val};
+        
+        vector<int> left = preorderTraversal(root -> left);
+        result.insert(result.end(), left.begin(), left.end());
 
-        if (root -> left) {
-            vector<int> left = preorderTraversal(root -> left);
-            result.insert(result.end(), left.begin(), left.end());
-        }
-        if (root -> right) {
-            vector<int> right = preorderTraversal(root -> right);
-            result.insert(result.end(), right.begin(), right.end());
-        }
+        vector<int> right = preorderTraversal(root -> right);
+        result.insert(result.end(), right.begin(), right.end());
+
         return result;
     }
     // Iteration
     vector<int> preorderTraversalIter(TreeNode* root) {
+        if (root == NULL) return {};
+        vector<int> result;
+        stack<TreeNode *> node_stack;
+        node_stack.push(root);
+        while (!node_stack.empty()) {
+            root = node_stack.top();
+            result.push_back(root -> val);
+            node_stack.pop();
+            if (root -> right != NULL) node_stack.push(root -> right);
+            if (root -> left != NULL) node_stack.push(root -> left); 
+        }
+        return result;
+    }
+
+    // 94. Binary Tree Inorder Traversal
+    // https://leetcode.com/problems/binary-tree-inorder-traversal/
+    // Recursion
+    vector<int> inorderTraversal(TreeNode* root) {
+        if (root == NULL) return {};
+        vector<int> result;
+        
+        vector<int> left = inorderTraversal(root -> left);
+        result.insert(result.end(), left.begin(), left.end());
+
+        result.push_back(root -> val);
+
+        vector<int> right = inorderTraversal(root -> right);
+        result.insert(result.end(), right.begin(), right.end());
+
+        return result;
+    }
+    // Iteration
+    vector<int> inorderTraversalIter(TreeNode* root) {
         
     }
 };
