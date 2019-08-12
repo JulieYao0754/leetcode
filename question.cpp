@@ -813,6 +813,26 @@ public:
     }
     // Iteration
     vector<int> inorderTraversalIter(TreeNode* root) {
+        if (root == NULL) return {};
+        stack<TreeNode*> undone;
+        vector<int> result;
+        while(1) {
+            while (root) {
+                undone.push(root);
+                root = root -> left;
+            }
+            if(undone.empty()) break;
+            root = undone.top();
+            undone.pop();
+            result.emplace_back(root -> val);
+            root = root -> right;
+        }
+        return result;
+    }
+
+    // 145. Binary Tree Postorder Traversal
+    // https://leetcode.com/problems/binary-tree-postorder-traversal/
+    vector<int> postorderTraversal(TreeNode* root) {
         
     }
 };
