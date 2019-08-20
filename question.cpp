@@ -1000,10 +1000,72 @@ public:
         else result[3] = k;
         return result;
     }
+
+    // 1160. Find Words That Can Be Formed by Characters
+    // https://leetcode.com/problems/find-words-that-can-be-formed-by-characters/
+    int countCharacters(vector<string>& words, string chars) {
+        // Use a vector<int> dict[26] directly.
+        unordered_map<char, int> dict;
+        for (char c: chars) {
+            if (dict.count(c) == 0) dict[c] = 0;
+            dict[c]++;
+        }
+
+        int result = 0;
+        for (string word: words) {
+            unordered_map<char, int> dict_copy(dict);
+            bool flag = true;
+            for (char c: word) {
+                if (dict_copy.count(c) == 0) {
+                    flag = false;
+                    break;
+                }
+                else if (dict_copy[c] == 0) {
+                        flag = false;
+                        break;
+                    }
+                    else dict_copy[c]--;
+            }
+            if (flag) result += word.size();
+        }
+        return result;
+    }
+
+    // 1161. Maximum Level Sum of a Binary Tree
+    // https://leetcode.com/problems/maximum-level-sum-of-a-binary-tree/
+    int maxLevelSum(TreeNode* root) {
+        int idx = 0, result = 1, max = root -> val;
+        vector<TreeNode*> line = {root};
+        while(!line.empty()) {
+            idx++;
+            vector<TreeNode*> next_line;
+            int cur_sum = 0;
+            for (TreeNode* node: line) {
+                cur_sum += node -> val;
+                if (node -> left) next_line.emplace_back(node -> left);
+                if (node -> right) next_line.emplace_back(node -> right);
+            }
+            if (cur_sum > max) {
+                max = cur_sum;
+                result = idx;
+            }
+            line = next_line;
+        }
+        return result;
+    }
 };
 
 int main() {
-    Solution Sol;
-    vector<int> a = {4,1,-1,2,-1,2,3};
-    vector<int> result = Sol.topKFrequent(a, 2);
+    RandomClick Sol;
+    TreeNode node1(7);
+    TreeNode node2(-8);
+    TreeNode node3(7);
+    TreeNode node4(0);
+    TreeNode root(1);
+    root.left = &node3;
+    root.right = &node4;
+    node3.left = &node1;
+    node3.right = &node2;
+    int out = Sol.maxLevelSum(&root);
+    cout << out << endl;
 }
