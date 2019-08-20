@@ -833,7 +833,39 @@ public:
     // 145. Binary Tree Postorder Traversal
     // https://leetcode.com/problems/binary-tree-postorder-traversal/
     vector<int> postorderTraversal(TreeNode* root) {
+        if (root == NULL) return {};
+        vector<int> result;
+        vector<int> left = postorderTraversal(root -> left);
+        result.insert(result.end(), left.begin(), left.end());
         
+        vector<int> right = postorderTraversal(root -> right);
+        result.insert(result.end(), right.begin(), right.end());
+
+        result.push_back(root -> val);
+
+        return result;
+    }
+    // Iteration
+    vector<int> postorderTraversalIter(TreeNode* root) {
+        stack<TreeNode*> candidates;
+        vector<int> result;
+        TreeNode* last = NULL;
+        while(1) {
+            while(root) {
+                candidates.push(root);
+                root = root -> left;
+            }
+
+            if (candidates.empty()) break;
+            TreeNode* cur = candidates.top();
+            if (cur -> right && last != cur -> right) root = cur -> right;
+            else{
+                result.push_back(cur -> val);
+                last = cur;
+                candidates.pop();
+            }
+        }
+        return result;
     }
 };
 
