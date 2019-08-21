@@ -3,6 +3,7 @@
 #include <math.h>
 #include <vector>
 #include <stack>
+#include <queue>
 #include <unordered_set>
 #include <unordered_map>
 using namespace std;
@@ -867,6 +868,85 @@ public:
         }
         return result;
     }
+
+    // 102. Binary Tree Level Order Traversal
+    // https://leetcode.com/problems/binary-tree-level-order-traversal/
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vector<vector<int>> result = {};
+        vector<int> line;
+        queue<TreeNode*> last_line;
+        last_line.push(root);
+        int size = 1;
+        while (!last_line.empty()) {
+            if (last_line.front() -> left) last_line.push(last_line.front() -> left);
+            if (last_line.front() -> right) last_line.push(last_line.front() -> right);
+            line.emplace_back(last_line.front() -> val);
+            last_line.pop();
+            size--;
+            if (size == 0) {
+                result.emplace_back(line);
+                size = last_line.size();
+                line.clear();
+            }
+        }
+        return result;
+    }
+
+    // 104. Maximum Depth of Binary Tree
+    // https://leetcode.com/problems/maximum-depth-of-binary-tree/
+    int maxDepth(TreeNode* root) {
+        if (root == NULL) return 0;
+        int left_depth = maxDepth(root -> left);
+        int right_depth = maxDepth(root -> right);
+        int result = max(left_depth, right_depth) + 1;
+        return result;
+    }
+
+    // 101. Symmetric Tree
+    // https://leetcode.com/problems/symmetric-tree/
+    // Recursion
+    bool isSymmetric(TreeNode* root) {
+        if (root == NULL) return true;
+        return compareSym(root -> left, root -> right);
+    }
+
+    bool compareSym(TreeNode* left, TreeNode* right) {
+        if (left == NULL && right == NULL) return true;
+        if (left == NULL || right == NULL) return false;
+        if (left -> val != right -> val) return false;
+        bool ans1 = compareSym(left -> left, right -> right);
+        bool ans2 = compareSym(left -> right, right -> left);
+        return (ans1 && ans2);  
+    }
+    // Iteration
+    bool isSymmetricIter(TreeNode* root) {
+        if (root == NULL) return true;
+        queue<TreeNode*> q;
+        q.push(root -> left);
+        q.push(root -> right);
+        while (!q.empty()) {
+            TreeNode* m1 = q.front();
+            q.pop();
+            TreeNode* m2 = q.front();
+            q.pop();
+            if (m1 == NULL && m2 == NULL) continue;
+            if (m1 == NULL || m2 == NULL) return false;
+            if (m1 -> val != m2 -> val) return false;
+            q.push(m1 -> left);
+            q.push(m2 -> right);
+            q.push(m1 -> right);
+            q.push(m2 -> left);
+        }
+        return true;
+    }
+
+    // 112. Path Sum
+    // https://leetcode.com/problems/path-sum/
+    bool hasPathSum(TreeNode* root, int sum) {
+        if (root == NULL) return false;
+        if (sum == root -> val && root -> left == NULL && root -> right == NULL) return true;
+        return hasPathSum(root -> left, sum - root -> val) || hasPathSum(root -> right, sum - root -> val);
+    }
 };
 
 // 705. Design HashSet
@@ -1056,16 +1136,20 @@ public:
 };
 
 int main() {
-    RandomClick Sol;
-    TreeNode node1(7);
-    TreeNode node2(-8);
-    TreeNode node3(7);
-    TreeNode node4(0);
+    Solution Sol;
+    TreeNode node1(3);
+    TreeNode node2(4);
+    TreeNode node3(4);
+    TreeNode node4(3);
+    TreeNode node5(2);
+    TreeNode node6(2);
     TreeNode root(1);
-    root.left = &node3;
-    root.right = &node4;
-    node3.left = &node1;
-    node3.right = &node2;
-    int out = Sol.maxLevelSum(&root);
+    root.left = &node5;
+    root.right = &node6;
+    node5.left = &node1;
+    node5.right = &node2;
+    node6.left = &node3;
+    node6.right = &node4;
+    int out = Sol.isSymmetricIter(&root);
     cout << out << endl;
 }
