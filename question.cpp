@@ -8,6 +8,13 @@
 #include <unordered_map>
 using namespace std;
 
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
 struct TreeNode {
         int val;
         TreeNode *left;
@@ -947,6 +954,27 @@ public:
         if (sum == root -> val && root -> left == NULL && root -> right == NULL) return true;
         return hasPathSum(root -> left, sum - root -> val) || hasPathSum(root -> right, sum - root -> val);
     }
+
+    // 106. Construct Binary Tree from Inorder and Postorder Traversal
+    // https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        if (inorder.size() == 0) return NULL;
+        TreeNode* root = new TreeNode(postorder.back());
+        if (inorder.size() == 1) return root;
+        // val1: the position of root in inorder vector
+        int val1 = 0;
+        while (inorder[val1] != postorder.back()) val1++;
+        vector<int> inorder_left(inorder.begin(), inorder.begin() + val1);
+        vector<int> inorder_right(inorder.begin()+ val1 + 1, inorder.end());
+        
+        vector<int> postorder_left(postorder.begin(), postorder.begin() + val1);
+        vector<int> postorder_right(min(postorder.begin() + val1 + 1, postorder.end() - 1), postorder.end() - 1);
+
+        root -> left = buildTree(inorder_left, postorder_left);
+        root -> right = buildTree(inorder_right, postorder_right);
+
+        return root;
+    }
 };
 
 // 705. Design HashSet
@@ -1043,6 +1071,37 @@ public:
 
 class RandomClick {
 public:
+    // 2. Add Two Numbers
+    // https://leetcode.com/problems/add-two-numbers/
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        int num1 = 0, num2 = 0;
+        int time = 1;
+        while(l1 != NULL) {
+            num1 += l1 -> val * time;
+            time *= 10;
+            l1 = l1 -> next;
+        }
+        time = 1;
+        while(l2 != NULL) {
+            num2 += l2 -> val * time;
+            time *= 10;
+            l2 = l2 -> next;
+        }
+        int result = num1 + num2;
+        struct ListNode* tmp;
+        struct ListNode* res = tmp;
+        while(1) {
+            res -> val = result % 10;
+            result -= result % 10;
+            result /= 10;
+            if (result == 0) break;
+            res -> next = new ListNode(0);
+            res = res -> next;
+        }
+        
+        return tmp;
+    }
+
     // 1093. Statistics from a Large Sample
     // https://leetcode.com/problems/statistics-from-a-large-sample/
     vector<double> sampleStats(vector<int>& count) {
@@ -1136,20 +1195,16 @@ public:
 };
 
 int main() {
-    Solution Sol;
-    TreeNode node1(3);
-    TreeNode node2(4);
-    TreeNode node3(4);
-    TreeNode node4(3);
-    TreeNode node5(2);
-    TreeNode node6(2);
-    TreeNode root(1);
-    root.left = &node5;
-    root.right = &node6;
-    node5.left = &node1;
-    node5.right = &node2;
-    node6.left = &node3;
-    node6.right = &node4;
-    int out = Sol.isSymmetricIter(&root);
-    cout << out << endl;
+    RandomClick Sol;
+    ListNode n1(2);
+    ListNode n2(4);
+    ListNode n3(3);
+    ListNode n4(5);
+    ListNode n5(6);
+    ListNode n6(4);
+    n1.next = &n2;
+    n2.next = &n3;
+    n4.next = &n5;
+    n5.next = &n6;
+    ListNode* p =  Sol.addTwoNumbers(&n1, &n4);
 }
